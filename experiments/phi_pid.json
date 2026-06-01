@@ -1,0 +1,61 @@
+{
+  "N": 64,
+  "persist_thresh": 0.9,
+  "rows": [
+    {
+      "name": "ordonn\u00e9",
+      "r": 3.5,
+      "eps": 0.3,
+      "lyap": -0.0007604026345146079,
+      "n_modes": 3,
+      "n_persist": 2,
+      "n_transient": 1,
+      "omega_persist": 0.0,
+      "omega_transient": NaN
+    },
+    {
+      "name": "faible chaos",
+      "r": 3.7,
+      "eps": 0.3,
+      "lyap": 0.20749977510858786,
+      "n_modes": 8,
+      "n_persist": 4,
+      "n_transient": 4,
+      "omega_persist": 1.1870024239937476,
+      "omega_transient": 0.053654578381188145
+    },
+    {
+      "name": "chaos",
+      "r": 3.9,
+      "eps": 0.3,
+      "lyap": 0.32058703438141006,
+      "n_modes": 48,
+      "n_persist": 6,
+      "n_transient": 42,
+      "omega_persist": -0.06519374434623768,
+      "omega_transient": -0.25220919592299074
+    },
+    {
+      "name": "chaos fort",
+      "r": 4.0,
+      "eps": 0.2,
+      "lyap": 0.37509258703745796,
+      "n_modes": 60,
+      "n_persist": 1,
+      "n_transient": 59,
+      "omega_persist": NaN,
+      "omega_transient": -0.2845986493413212
+    },
+    {
+      "name": "chaos d\u00e9corr\u00e9l\u00e9",
+      "r": 4.0,
+      "eps": 0.05,
+      "lyap": 0.5370515544117348,
+      "n_modes": 64,
+      "n_persist": 1,
+      "n_transient": 63,
+      "omega_persist": NaN,
+      "omega_transient": -0.3037767560869918
+    }
+  ]
+}

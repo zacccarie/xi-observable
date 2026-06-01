@@ -206,6 +206,43 @@ valeur ≫1 signale un DMD mal conditionné.
 **Limite v0** : PR = proxy grossier ; le Φ complet exige une attribution de synergie
 PAR MODE (PID spectral : Ω de la projection sur chaque mode Koopman vs le reste),
 pas un participation ratio. Établi : (a) DMD propre faisable, (b) les deux axes de Φ
-sont distincts, (c) la dimension effective marque la synchronisation. Reste : la
-vraie synergie de mode. **Φ = synergie persistante reste largement ouvert — chapitre
-suivant.**
+sont distincts, (c) la dimension effective marque la synchronisation.
+
+### B v1 — la tension émergence≡chaos vs Φ persistance, tranchée (`phi_pid.py`)
+
+A pose une tension : si émergence ≡ chaos ≡ instabilité, alors « synergie
+PERSISTANTE » (Φ) est-elle contradictoire ? Test sur Coupled Map Lattice
+(chaotique, structures cohérentes) : DMD → amplitudes de mode, split persistant
+(|λ|≥0.9) / transitoire, Ω de chaque groupe sur 5 régimes (ordonné → chaos décorrélé).
+
+| régime | λ_max | Ω_persist | Ω_transient |
+|--------|-------|-----------|-------------|
+| ordonné | ≈0 | 0 | — |
+| faible chaos | +0.21 | +1.19 (redondance) | +0.05 |
+| chaos | +0.32 | **−0.065** | −0.25 |
+| chaos fort | +0.38 | (1 mode) | −0.28 |
+| chaos décorrélé | +0.54 | (1 mode) | −0.30 |
+
+**Résolution** :
+1. **L'émergence est préférentiellement FUGACE** — la synergie est partout plus forte
+   dans les modes transitoires (amortis) que persistants. Cohérent avec A :
+   émergence ≡ instabilité ⟹ porte sur les modes qui ne durent pas.
+2. **Φ n'est pas vide mais RARE et FAIBLE** : les modes persistants ne portent de la
+   synergie (Ω<0) que dans une fenêtre étroite — chaos MODÉRÉ + couplage FORT
+   (r=3.9, ε=0.3) — et marginalement (−0.065 vs −0.25).
+3. Plus le chaos est fort ou le couplage faible → moins de modes persistants
+   (6→1) → la synergie migre 100% vers les transitoires → Φ se vide.
+
+**Conclusion conceptuelle (boucle le programme)** :
+> Émergence (A) ≡ chaos ≡ instabilité ⟹ l'émergence VEUT être fugace. Φ = la
+> fraction qui DURE = un rare résidu d'émergence stabilisé en structure cohérente.
+> Précieux justement parce que rare. Les systèmes riches en Φ (cerveau, vie,
+> reservoir computing) sont spéciaux : ils résolvent la tension émergence/persistance
+> via le bon régime — **chaos modéré + fort couplage**. C'est exactement le régime
+> brain-criticality / reservoir-computing. L'edge of chaos pertinent pour Φ n'est pas
+> la frontière ordre/chaos mais une frontière INTERNE au chaos : entre chaos-structuré
+> (Φ existe) et chaos-décorrélé (Φ vide).
+
+**Caveat** : 5 régimes, 1 seed/régime, Ω_persist faible (−0.065). Suggestif, non
+établi. Solidification requise : surrogate (shuffle amplitudes) + multi-seed pour
+confirmer que Ω_persist<0 est significatif et pas bruit d'estimation.
