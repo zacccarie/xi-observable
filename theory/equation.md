@@ -226,3 +226,57 @@ Test Ising L=32, 20 réalisations indépendantes par T :
 - Le floor ne sert à rien (pas de parasite). std vs CV = choix dicté par la bornitude de Ω (structure de C).
 
 **Méta-leçon de l'arc #7→#8→#9→#10** : sur peu de données bruitées, une métrique peut sembler (#7) excellente, puis (#9) cassée, puis (#10) simplement normale. Sur-vente puis sur-réfutation = deux faces du même biais (conclure sur N petit). La **seule chose robuste = le MOTIF** « variance d'un observable de régime pique près de la criticalité », transversal aux 3 systèmes. La quantification de sa précision exige finite-size scaling soigné (grand L, grand n_real, peak fitting), pas un seul run.
+
+## Tasks #7 + #10 + #13 complétées (session 2026-06-01 suite)
+
+### #7 Sensitivity (ε, subset_size) Ising — ROBUSTE
+
+Sweep ε ∈ {0.05..0.70} × subset_size ∈ {2,3,4,6} sur Ising L=32.
+- argmax(Ξ_tc) ∈ {2.333, 2.400} pour tout (ε, ss) — std = 0.031, max |Δ vs Tc| = 0.131 (finite-size shift cohérent)
+- subset_size n'affecte PAS la localisation : peak TC identique pour ss=2..6
+- ε change largeur du pic, pas position
+- **Verdict : MODÉRÉMENT ROBUSTE**. Observable Ξ_tc stable aux méta-paramètres.
+
+### #10 Kuramoto 2D local (couplage 4-voisins) — confirme dualité CG↔C
+
+L=16 N=256, sweep K ∈ [0.3, 5.0]. Couplage local → CG spatial légitime.
+- peak χ = K=3.0 = K_c effectif (finite-size)
+- **peak CV(Ω) = K=3.0** ← coïncide χ → χ_info confirme localisation
+- Zéro-crossing Ω entre K=3 et K=4
+- **Bascule régime SYNERGIE(désync, Ω<0) → REDONDANCE(sync, Ω>0)** — OPPOSÉ RBN (ordre=red, chaos=syn)
+- γ_K min à K=1.3 (γ=+0.016) bizarre — probable artefact CG biased (à investiguer)
+
+### #13 Percolation 2D site — universalité χ_info hors classe Ising
+
+L=32, sweep p ∈ [0.4, 0.8] autour p_c=0.5927 (classe random cluster ≠ Ising 2D conforme).
+- peak χ_perco = 0.595 (Δ=+0.002) ← géométrique classique, le meilleur
+- **peak CV(Ω) = 0.610 (Δ=+0.017)** ← informationnel proche p_c, universel confirmé
+- TC monotone (pas pic) : Bernoulli i.i.d. par site → aucune corrélation spatiale induite par μ, TC ≈ 0 partout
+- std(Ω) raté complet (peak p=0.70)
+- **Verdict** : CV(Ω) localise p_c **mais précision dégradée** vs Ising/Kuramoto (Δ=0.017 vs 0.003-0). Cohérent : sur système statique non-corrélé (C trivial), observables géométriques classiques restent supérieurs.
+
+### Synthèse universalité χ_info (4 systèmes)
+
+| Système | Classe | p_c/T_c/K_c | peak CV(Ω) | Δ |
+|---------|--------|-------------|------------|---|
+| Ising 2D L=32 | conforme thermo | Tc=2.269 | 2.267 (#7) / 2.275 (L=64 #10) | −0.003 / +0.006 |
+| RBN N=60 | Kauffman dynamique | K_c=2 | K=2 | 0.000 |
+| Kuramoto 2D N=256 | synchronisation locale | K_c≈3 (eff.) | K=3.0 | 0.000 |
+| Percolation 2D L=32 | random cluster géom. | p_c=0.5927 | 0.610 | +0.017 |
+
+**Conséquence testable #7 validée transversalement** : χ_info = std/CV(Ω) inter-réalisations pique près de la criticalité dans 4 classes universalité distinctes. Motif robuste, précision varie. Non remplaçable mais non supérieur en absolu — complémentaire des observables classiques (χ, ξ, τ_corr) spécifiques à chaque classe.
+
+**Bascule régime sign(Ω) à criticalité — pattern observé** :
+- Ising : Ω > 0 partout (ferromagnétique = redondance pure, pas de bascule)
+- RBN : Ω > 0 (ordre K<2) → Ω < 0 (chaos K>2)  — bascule à K_c=2
+- Kuramoto 2D : Ω < 0 (désync K<3) → Ω > 0 (sync K>3) — bascule à K_c≈3, **opposée RBN**
+- Percolation : Ω ≈ const (−0.011) — pas de bascule (μ Bernoulli i.i.d., pas de dynamique sous-jacente)
+
+**Tétrade interprétation** : sign(Ω) dépend de la nature de C (couplage). Phase "copiante" (redondance) :
+- Ferromagnétique Ising froid
+- Sync Kuramoto (alignement phase)
+- Frozen RBN K<2 (états gelés)
+Phase "diversifiante" (synergie) :
+- Chaos RBN K>2 (orbites distinctes XOR-like)
+- Désync Kuramoto K<3 (oscillations indépendantes)
+Direction de la bascule sign(Ω) ↔ K dépend de quel pôle (ordre/chaos) correspond à la copie informationnelle dans le système.
