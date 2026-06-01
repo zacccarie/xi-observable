@@ -188,4 +188,26 @@ Test Ising L=32, 20 réalisations indépendantes par T :
 - Kuramoto : désync (K<Kc) = synergie (Ω<0), sync (K>Kc) = redondance (Ω>0)
 - Cohérent : oscillateurs synchronisés se copient (redondance) ; nœuds RBN gelés se copient (redondance). La redondance = phase « ordonnée/copiante » de chaque système, qui est K<Kc pour RBN mais K>Kc pour Kuramoto.
 
-**Conséquence testable (#9)** : CV(Ω) localise le point critique à finite-size bias quasi-nul pour tout système à transition. À tester : scaling L (Ising L=16/32/64/128) — la précision de CV(Ω) sur Tc dépend-elle de L comme χ (shift ~L^{−1/ν}) ou reste-t-elle collée ?
+**Conséquence testable (#9)** : CV(Ω) localise le point critique à finite-size bias quasi-nul pour tout système à transition. À tester : scaling L (Ising L=16/32/64/128).
+
+## Réfutation #9 — "observable universel" était prématuré (scaling L, `ising_scaling_L.py`)
+
+**Finding négatif** : le scaling L=16/24/32/48/64 RÉFUTE la robustesse universelle de χ_info.
+- Δχ (pic χ vs Tc) : stable +0.056 à +0.099, décroît ~L⁻¹ (finite-size scaling propre, ν=1)
+- ΔCV (pic CV(Ω) vs Tc) : ERRATIQUE −0.184/−0.169/−0.039/−0.169/−0.017, mean |ΔCV|=0.116 > |Δχ|=0.070, AUCUNE convergence
+
+**Diagnostic** : CV(Ω) sur Ising a un **pic parasite à basse T** (T≈2.10-2.15) où ⟨|Ω|⟩ → 0 en phase ordonnée → division par petit → CV explose artificiellement. L'argmax saute entre ce parasite et le vrai pic (≈Tc) selon L. Le résultat #8 "CV Ising Δ=−0.003" tenait seulement parce que le range large [1.8,3.0] avec std basse-T minuscule masquait l'artefact ; le range serré [2.05,2.55] le révèle.
+
+**Conclusion honnête — domaines de validité, pas universalité** :
+| Observable | valide quand | échoue quand |
+|-----------|--------------|--------------|
+| std(Ω) brut | Ω borné (Ising Tc ✓ Δ=−0.003, RBN K=2 ✓) | Ω explose en amplitude (Kuramoto sync) |
+| CV(Ω) = std/⟨|Ω|⟩ | Ω amplitude-variable sans phase ⟨|Ω|⟩→0 (Kuramoto Kc ✓ Δ=+0.004) | phase à basse activité (Ising ordonné → pic parasite) |
+
+**Aucun observable scalaire unique n'est universellement robuste.** χ_info était une généralisation prématurée sur 2 systèmes ; le 3e régime (scaling L + basse activité) la réfute. C'est la **4e généralisation prématurée réfutée par extension** du programme (après : γ→0 Kuramoto = artefact CG ; synergie RBN chaos profond = bruit ; std universel). 
+
+**Pattern épistémique consolidé du programme** : tout finding sur ≤2 systèmes doit être falsifié par extension à un 3e régime. La récurrence de ce pattern est elle-même le méta-finding le plus robuste.
+
+**Ce qui SURVIT (motif, pas formule)** : la *variance inter-réalisations d'un observable de régime* pique près de la criticalité dans Ising, RBN ET Kuramoto — le MOTIF « susceptibilité informationnelle » est réel et transversal. Mais sa FORME ROBUSTE (std brut vs normalisé vs régularisé) dépend de la structure de C. Confirme la thèse centrale : **Ξ = template, l'instanciation dépend de la classe de criticalité dans C.** Pas de raccourci scalaire universel.
+
+**Fix candidat (à tester, #10)** : CV régularisé = std(Ω)/(⟨|Ω|⟩ + Ω_floor) avec Ω_floor empêchant l'explosion basse-activité ; ou restriction automatique au sous-domaine où ⟨|Ω|⟩ > seuil. Réconcilierait Ising et Kuramoto si un floor unique marche pour les deux.
