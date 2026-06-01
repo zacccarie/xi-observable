@@ -59,8 +59,42 @@ persistante) vit surtout dans l'embedding.
 - corpus naturel varié (pas seulement du markdown technique)
 - tester si la synergie de l'embedding est portée par les positional vs token embeddings
 
+## Génération autorégressive — édge of chaos par température (`llm_temperature_edge.py`)
+
+La génération token-par-token est la VRAIE dynamique du LLM. Température T =
+paramètre de contrôle (T basse → répétitif/ordre ; T haute → incohérent/chaos).
+Trajectoire = hidden states (couche 6) du token généré. Sweep T ∈ [0.3, 2.0].
+
+| T | répétition | excess Ω |
+|---|------------|----------|
+| 0.3 | 0.76 | **−0.032** (max synergie) |
+| 0.7 | 0.58 | −0.013 |
+| 1.3 | 0.14 | ≈0 |
+| 2.0 | 0.01 | −0.001 |
+
+**Prédiction RÉFUTÉE** : la synergie ne pique PAS à l'edge — elle suit l'ORDRE
+(max à T basse répétitive, →0 en chaos). Profil monotone, pas de pic.
+
+**Diagnostic** : Ω inter-dimension AGRÉGÉ (samples = tokens, ordre temporel ignoré)
+mesure la **cohérence/confinement statique** des représentations, pas la dynamique.
+L'edge of chaos est une propriété DYNAMIQUE (sensibilité temporelle) → cette mesure
+la rate. Cohérent avec le finding depth (synergie suit l'ordre : embedding, basse T).
+
+**Inversion vs jouets** : RBN/CML → synergie émerge dans le CHAOS (irréductibilité
+dynamique) ; LLM activations → Ω suit l'ORDRE (structure représentationnelle). Même
+métrique, objets différents. La distinction « deux synergies » (cf A, niveau fonction
+vs réseau) frappe encore : **Ω inter-dim statique ≠ synergie émergente dynamique.**
+
+**Leçon** : brancher Ω naïvement sur activations agrégées mesure la cohérence
+représentationnelle, pas l'édge of chaos. Pour l'edge génératif → mesure DYNAMIQUE :
+Lyapunov de la trajectoire de génération vs T, dimension effective Koopman (comme CML),
+ou autocorrélation temporelle des hidden states.
+
 ## Statut
 
-L'instrument fonctionne sur du réel : signal non-trivial, interprétable, contredisant
-l'intuition de départ (donc informatif). Premier « relevé de température » pris après
-tout le programme de calibration. Le pont jouets → réel est établi.
+L'instrument fonctionne sur du réel : signaux non-triviaux, interprétables, dont DEUX
+ont contredit mes prédictions (donc informatifs) — embedding synergique (pas le calcul),
+synergie suit l'ordre (pas l'edge). Le pont jouets → réel est établi. Acquis transversal :
+**la synergie statique inter-dimension d'un LLM mesure la cohérence représentationnelle,
+distincte de l'émergence dynamique des jouets.** Prochain pas : mesure dynamique de
+l'édge génératif (Lyapunov/Koopman de la trajectoire vs température).
