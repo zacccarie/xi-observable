@@ -107,7 +107,23 @@ régime chaotique, cf data.json). La beauté du front mobile ≠ l'émergence.
 
 L'identification mathématique tient (Evolution AE = coupe bruit 3D ; lampe à lave =
 mouvement d'interface par courbure). Mais le pont « interface = émergence » est coupé.
-L'edge of chaos reste une interface dans l'espace des PARAMÈTRES — c'est là que la
-synergie bascule (A, RBN, CML chaos) — mais les interfaces SPATIALES d'un champ
-diffusif ne portent pas de synergie. Distinction : interface paramétrique (émergente)
-vs interface spatiale diffusive (redondante).
+
+## Espace des paramètres (insight Zac) — structure géométrique ≠ synergie
+
+Test : carte observable(r, ε) sur grille, `parameter_space_emergence.py`. Insight Zac :
+chaque dimension (dont les paramètres de contrôle) porte du sens ; les espaces abstraits
+permettent de toutes les comparer.
+
+Résultat :
+- La carte (r,ε) est **géométriquement très structurée** : edge serpentant (contour λ=0),
+  fenêtres périodiques (îlots d'ordre dans le chaos, cascade Feigenbaum fractale le long
+  de r), transition de dimension effective brutale. Le « pattern de la fonction » porte
+  bien de l'information — confirmé.
+- MAIS Ω entre observables (λ, dim, ⟨v⟩, std) sur la grille = **+0.38 (redondance)**. Les
+  observables co-varient (facettes du même régime), pas synergiques.
+
+**Distinction finale** : information GÉOMÉTRIQUE/structurelle (la carte est complexe,
+fractale aux frontières) ≠ synergie info-théorique (Ω). 3e dimension testée (après espace
+et temps), 3e fois la même leçon : structure visible partout, synergie nulle part (sauf
+couplage non-monotone construit). L'edge of chaos est une interface géométriquement riche
+dans l'espace des paramètres, mais « riche » = structurellement, pas synergiquement.
