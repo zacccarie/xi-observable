@@ -23,13 +23,16 @@ function stepCML() {
   const t = state; state = next; next = t;
 }
 
-const C0 = [0.0, 0.55, 0.85], C1 = [1.0, 0.17, 0.84], C2 = [1.0, 0.83, 0.0];
+// colormap inferno : perceptuellement uniforme, luminosité monotone → lisible sur noir
+const INFERNO = [
+  [0.001, 0.000, 0.014], [0.258, 0.039, 0.406], [0.576, 0.149, 0.404],
+  [0.866, 0.317, 0.226], [0.988, 0.998, 0.645],
+];
 function colormap(v, out) {
   v = v < 0 ? 0 : v > 1 ? 1 : v;
-  let a, b, t;
-  if (v < 0.5) { a = C0; b = C1; t = v / 0.5; } else { a = C1; b = C2; t = (v - 0.5) / 0.5; }
-  const g = 0.35 + 0.65 * v;
-  out.setRGB((a[0] + (b[0] - a[0]) * t) * g, (a[1] + (b[1] - a[1]) * t) * g, (a[2] + (b[2] - a[2]) * t) * g);
+  const s = v * 4, i = Math.min(3, Math.floor(s)), t = s - i;
+  const a = INFERNO[i], b = INFERNO[i + 1];
+  out.setRGB(a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t);
 }
 
 // ---------- HUD (toujours actif) ----------
@@ -56,7 +59,7 @@ function setRegime(syn) {
   else if (syn > 0.05) { label = '◆ CHAOS · ÉMERGENCE'; color = getCSS('--magenta'); glow = true; }
   else { label = '◆ BASCULE'; color = getCSS('--yellow'); glow = true; }
   regimeTag.textContent = label; regimeTag.style.color = color;
-  regimeTag.style.boxShadow = glow ? `0 0 18px ${color}` : 'none';
+  regimeTag.style.borderColor = color;
 }
 
 function updateHUD() {
@@ -98,20 +101,20 @@ fetch('data.json').then(x => x.json()).then(d => { ref = d; updateHUD(); drawCur
   .catch(() => { updateHUD(); drawCurves(); });
 updateHUD(); drawCurves();
 
-// ---------- Three.js (optionnel, dégradation gracieuse) ----------
-let webglOK = true, composer = null, mesh = null;
+// ---------- Three.js (rendu direct, sans bloom — clarté du champ) ----------
+let webglOK = true, renderer = null, scene = null, cam = null, mesh = null;
 const col = new THREE.Color();
 try {
-  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   document.getElementById('app').appendChild(renderer.domElement);
 
-  const scene = new THREE.Scene();
+  scene = new THREE.Scene();
   scene.background = new THREE.Color(0x05060a);
-  const cam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 10);
+  cam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 10);
   cam.position.z = 2;
 
-  const geo = new THREE.PlaneGeometry(0.92, 0.92);
+  const geo = new THREE.PlaneGeometry(1.0, 1.0);   // cellules jointives → champ continu lisible
   const mat = new THREE.MeshBasicMaterial({ color: 0xffffff });
   mesh = new THREE.InstancedMesh(geo, mat, L * L);
   const dummy = new THREE.Object3D();
@@ -124,14 +127,10 @@ try {
   mesh.instanceMatrix.needsUpdate = true;
   scene.add(mesh);
 
-  composer = new THREE.EffectComposer(renderer);
-  composer.addPass(new THREE.RenderPass(scene, cam));
-  composer.addPass(new THREE.UnrealBloomPass(new THREE.Vector2(1, 1), 1.25, 0.55, 0.0));
-
   const resize = () => {
     const w = window.innerWidth, h = window.innerHeight;
-    renderer.setSize(w, h); composer.setSize(w, h);
-    const aspect = w / h, span = L / 2 + 1;
+    renderer.setSize(w, h);
+    const aspect = w / h, span = L / 2;
     if (aspect >= 1) { cam.left = -span * aspect; cam.right = span * aspect; cam.top = span; cam.bottom = -span; }
     else { cam.left = -span; cam.right = span; cam.top = span / aspect; cam.bottom = -span / aspect; }
     cam.updateProjectionMatrix();
@@ -151,6 +150,6 @@ function loop() {
     for (let i = 0; i < L * L; i++) { colormap(state[i], col); mesh.setColorAt(i, col); }
     mesh.instanceColor.needsUpdate = true;
   }
-  composer.render();
+  renderer.render(scene, cam);
 }
 loop();
