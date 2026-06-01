@@ -147,10 +147,32 @@ c'est le prix. L'émergence et le chaos ne sont pas séparables. La complexité
 (synergie nette max) vit à la frontière, juste avant la dilution chaotique. **Pas
 d'émergence sans flirt avec l'instabilité.**
 
-**Caveat** : 1 système (RBN), 1 forme de synergie (parité, maximalement chaotique).
-Reste à tester d'autres formes d'irréductibilité (synergie non-parité) pour voir si
-l'identification synergie≡chaos est universelle ou propre à la parité. Mais la
-parité étant la synergie canonique pure, l'identification est probablement robuste.
+### Durcissement (A — test exhaustif fonctions, `synergy_sensitivity.py`)
+
+Énumération EXHAUSTIVE des 256 fonctions booléennes K=3 : pour chacune, synergie
+intrinsèque Ω(inputs,output) et average sensitivity s (→ Derrida).
+
+- **corr(Ω, s) = −0.954**, relation quasi-déterministe (chaque s → Ω quasi-unique)
+- **Coin « forte synergie + basse sensibilité » strictement VIDE** : Ω<−0.5 (128 fonctions) → 0 à s<1.5 ; Ω<−1.0 (18) → 0. Aucune fonction synergique non-sensible n'existe.
+- Identification confirmée AUX DEUX NIVEAUX : fonction (A, quasi-bijection) et réseau (test décisif, r=0.999). Pas propre à la parité.
+
+### Le paramètre unique : degré de conjonction de la règle
+
+> Synergie et sensibilité sont deux mesures d'UNE chose : **le degré auquel
+> l'output dépend de la CONJONCTION des entrées vs de leurs contributions
+> individuelles.**
+> - Canalisation (un input force la sortie) = info réductible = basse sensibilité = ordre
+> - Non-canalisation (tous comptent ensemble, XOR) = info irréductible = haute sensibilité = chaos
+>
+> Un seul paramètre — la conjonctivité de la règle — contrôle simultanément
+> l'émergence (synergie Ω<0) ET l'instabilité (chaos, Derrida>1). Ce n'est pas une
+> corrélation, c'est une identité structurelle. **L'émergence EST le chaos, vus
+> respectivement côté information et côté dynamique.**
+
+**Caveat résiduel** : K=3 exhaustif ; K≥4 (65536 fonctions) à échantillonner pour
+confirmer que le coin reste vide. La relation quasi-déterministe à K=3 est forte
+évidence. Distinction maintenue : synergie I/O (fonction) ≠ synergie émergente
+inter-nœuds (réseau) — mais les deux suivent le même paramètre (conjonctivité).
 
 ## Φ, recadré
 
