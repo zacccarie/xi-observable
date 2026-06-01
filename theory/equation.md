@@ -211,3 +211,18 @@ Test Ising L=32, 20 réalisations indépendantes par T :
 **Ce qui SURVIT (motif, pas formule)** : la *variance inter-réalisations d'un observable de régime* pique près de la criticalité dans Ising, RBN ET Kuramoto — le MOTIF « susceptibilité informationnelle » est réel et transversal. Mais sa FORME ROBUSTE (std brut vs normalisé vs régularisé) dépend de la structure de C. Confirme la thèse centrale : **Ξ = template, l'instanciation dépend de la classe de criticalité dans C.** Pas de raccourci scalaire universel.
 
 **Fix candidat (à tester, #10)** : CV régularisé = std(Ω)/(⟨|Ω|⟩ + Ω_floor) avec Ω_floor empêchant l'explosion basse-activité ; ou restriction automatique au sous-domaine où ⟨|Ω|⟩ > seuil. Réconcilierait Ising et Kuramoto si un floor unique marche pour les deux.
+
+## Clarification #10 — le floor n'aide pas ; le shift CV est finite-size, pas un parasite (`ising_floor_test.py`)
+
+**Finding** : test CV_reg = std(Ω)/(⟨|Ω|⟩ + floor·max⟨|Ω|⟩), floor ∈ [0, 0.30], Ising L=32,64 range serré.
+- Le floor ne change RIEN (Δ identique à tout floor) → **le diagnostic "parasite de division" de #9 était FAUX**. Ce n'est pas une explosion par ⟨|Ω|⟩→0.
+- L=32 : CV **bimodal** (pics à 2.20 et 2.30), argmax instable → Δ=−0.066
+- L=64 : CV **unimodal propre à Tc** (T=2.275, Δ=+0.006), bat χ (Δ≈+0.056)
+- → **CV(Ω) converge vers Tc avec L croissant** : effet finite-size normal, pas artefact. L'erratisme de #9 = bimodalité finite-size + bruit (n_real=12) sur petits L.
+
+**Statut net consolidé de χ_info (honnête)** :
+- χ_info = famille {std(Ω) si Ω borné, CV(Ω) sinon} = localisateur de criticalité **valide et transversal** (Ising Tc, RBN K_c, Kuramoto K_c).
+- Localisation **comparable** aux observables classiques (χ, τ_corr), **légèrement meilleure à grand L** (L=64 : CV Δ=+0.006 vs χ +0.056), mais **PAS de supériorité finite-size dramatique** prouvée. Le Δ=−0.003 de #7 était un range/seed favorable, non représentatif.
+- Le floor ne sert à rien (pas de parasite). std vs CV = choix dicté par la bornitude de Ω (structure de C).
+
+**Méta-leçon de l'arc #7→#8→#9→#10** : sur peu de données bruitées, une métrique peut sembler (#7) excellente, puis (#9) cassée, puis (#10) simplement normale. Sur-vente puis sur-réfutation = deux faces du même biais (conclure sur N petit). La **seule chose robuste = le MOTIF** « variance d'un observable de régime pique près de la criticalité », transversal aux 3 systèmes. La quantification de sa précision exige finite-size scaling soigné (grand L, grand n_real, peak fitting), pas un seul run.
