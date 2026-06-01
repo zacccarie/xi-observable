@@ -14,6 +14,48 @@ def make_rbn(N, K, p=0.5, seed=0):
     return inputs, tables
 
 
+def _parity_table(K, rng):
+    """Table de vérité PARITÉ (XOR) : non-monotone, non-canalisante → synergie max.
+    Négation aléatoire de sortie pour varier sans casser l'irréductibilité."""
+    idx = np.arange(2 ** K)
+    bits = np.array([bin(i).count("1") & 1 for i in idx], dtype=np.int8)
+    if rng.random() < 0.5:
+        bits ^= 1
+    return bits
+
+
+def _canalizing_table(K, rng):
+    """Table CANALISANTE (AND/OR avec négations d'entrées) : monotone → redondance.
+    Une entrée+valeur force la sortie. Pas d'irréductibilité."""
+    idx = np.arange(2 ** K)
+    bitmat = ((idx[:, None] >> np.arange(K)[None, :]) & 1).astype(np.int8)  # (2^K, K)
+    negate = rng.integers(0, 2, size=K)
+    lits = bitmat ^ negate[None, :]                  # littéraux (entrées éventuellement niées)
+    if rng.random() < 0.5:
+        table = (lits.sum(axis=1) == K).astype(np.int8)   # AND des littéraux
+    else:
+        table = (lits.sum(axis=1) > 0).astype(np.int8)     # OR des littéraux
+    return table
+
+
+def make_rbn_controlled(N, K, synergy_frac=0.5, seed=0):
+    """RBN à monotonie CONTRÔLÉE. Chaque nœud reçoit, avec proba synergy_frac,
+    une fonction parité (synergique), sinon canalisante (redondante).
+    Permet de découpler irréductibilité de C et criticalité (Derrida)."""
+    rng = np.random.default_rng(seed)
+    inputs = np.empty((N, K), dtype=np.int64)
+    tables = np.empty((N, 2 ** K), dtype=np.int8)
+    n_syn = 0
+    for i in range(N):
+        inputs[i] = rng.choice(N, size=K, replace=False)
+        if rng.random() < synergy_frac:
+            tables[i] = _parity_table(K, rng)
+            n_syn += 1
+        else:
+            tables[i] = _canalizing_table(K, rng)
+    return inputs, tables, n_syn / N
+
+
 def step_batch(states, inputs, tables, K):
     """Update synchrone vectorisé sur M conditions initiales en parallèle.
     states : (M, N) int8 ∈ {0,1}. Retourne (M, N)."""
