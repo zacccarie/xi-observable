@@ -280,3 +280,58 @@ Phase "diversifiante" (synergie) :
 - Chaos RBN K>2 (orbites distinctes XOR-like)
 - Désync Kuramoto K<3 (oscillations indépendantes)
 Direction de la bascule sign(Ω) ↔ K dépend de quel pôle (ordre/chaos) correspond à la copie informationnelle dans le système.
+
+## Test LZ-complexity vs χ_info — pont info-théorie/computation PARTIEL (2026-06-01)
+
+Conjecture testée (suite réflexion Gödel/indécidabilité) : si χ_info = Var_réalisations(Ω) mesure incompressibilité algorithmique différentielle, alors Var_réalisations(LZ-complexity) devrait piquer aux mêmes K critiques.
+
+**Protocole RBN N=48, p=0.5, K∈{1..5}, n_networks=12, n_init=600** :
+
+| K | mean(LZ) | std(LZ)_nets | χ_info=std(Ω) | Derrida |
+|---|----------|--------------|---------------|---------|
+| 1 | 0.05 | 0.048 | 0.000 | 0.48 |
+| **2** | 0.16 | 0.095 | **0.030** ← peak χ_info | 0.88 (K_c) |
+| **3** | 0.61 | **0.208** ← peak std(LZ) | 0.009 | 1.11 |
+| 4 | 1.02 | 0.003 | 0.001 | 1.38 |
+| 5 | 1.02 | 0.002 | 0.000 | 1.52 |
+
+**Pearson(χ_info, std(LZ)) = +0.42** — corrélation faible-modérée, pas pont strict.
+
+### Verdict — conjecture partiellement réfutée
+
+χ_info et Var(LZ) **ne piquent pas au même K** :
+- **χ_info pique à K=2** (edge of chaos Derrida=1) — transition régime informationnel (red↔syn, sign Ω)
+- **Var(LZ) pique à K=3** (bordure chaos) — transition complexité algorithmique (compressible↔incompressible)
+
+### Conséquence théorique majeure — 2 frontières critiques distinctes
+
+Ω et LZ mesurent **dimensions orthogonales** de la complexité :
+- **Ω = O-information** : structure de dépendance multivariée (signe + magnitude). Régime qualitatif.
+- **LZ = approx K_Kolmogorov** : compressibilité brute. Quantitatif scalaire.
+
+Système RBN traverse **deux transitions critiques successives** :
+- K=2 : **edge of chaos informationnel** — Ω change de signe, χ_info pique
+- K=3 : **edge of chaos algorithmique** — Var(LZ) pique, transition gel/chaos brut
+
+Distance entre les 2 frontières (ΔK = 1 ici) = nouveau scalaire candidat = **largeur fenêtre critique**.
+
+### Implication pour Ξ template
+
+Ξ ne se réduit PAS à algorithmic information theory pure. Tétrade (D,V,C,μ) → Ξ contient information SUPPLÉMENTAIRE par rapport à K_Kolmogorov seul. Reformulation :
+
+- Ξ_info = χ_info(Ω) → localise edge of chaos info (régime)
+- Ξ_algo = Var(LZ) → localise edge of chaos algorithmique (compressibilité)
+- Ξ complet = ces 2 axes + leur écart ΔK
+
+### Implication pour analogie Gödel/Wolfram
+
+Analogie computational irreducibility (Wolfram) : **validée faiblement** (corrélation +0.42). Mais critique algorithmique ≠ critique informationnelle strictement.
+
+Affinement : système peut être à :
+- (a) criticalité info SANS irréductibilité algorithmique (K=2 RBN : gel partiel = compressible mais régime instable)
+- (b) irréductibilité algorithmique SANS criticalité info (chaos profond K=5 : incompressible mais Ω=0 = pas de structure de régime)
+- (c) AUX DEUX simultanément (K=3 RBN : bordure chaos + transition régime quasi-simultanée)
+
+**Conséquence testable additionnelle (#8)** : pour toute classe de criticalité, mesurer ΔK = distance entre peak χ_info et peak Var(LZ). Si ΔK=0 universellement → 1 frontière unique. Si ΔK > 0 systématiquement → **dualité info/algo** est trait fondamental des transitions de phase.
+
+**À tester sur** : Ising 2D, Kuramoto 2D, percolation. Si ΔK ≈ 0 sur Ising (classe conforme) mais > 0 sur RBN (Kauffman) → la dualité dépend de la structure de C, pas universelle.
