@@ -161,4 +161,31 @@ Test Ising L=32, 20 réalisations indépendantes par T :
 
 **Candidat observable Ξ central** : Ξ_susceptibility(S) = Var_réalisations(Ω_blocs). Auto-normalisé, sans paramètre de contrôle externe nécessaire pour le pic, robuste finite-size, transversal aux classes de criticalité. C'est le résultat le plus solide et le plus général du programme.
 
-**Conséquence testable (#8)** : χ_info devrait localiser le point critique avec moins de finite-size bias que χ pour TOUT système — à tester sur Kuramoto (Var_réalisations(Ω) à K_c=1.596 ?) et systèmes de tailles L variables (scaling de la précision de localisation).
+**Conséquence testable (#8) — testée, raffinée (Kuramoto, `kuramoto_suscept_info.py`)** : χ_info devrait localiser le point critique avec moins de finite-size bias que χ pour TOUT système.
+
+## Raffinement : χ_info brut non-universel → coefficient de variation CV(Ω) universel
+
+**Réfutation puis sauvetage (Kuramoto N=64)** : std(Ω) BRUT échoue sur Kuramoto — l'argmax global tombe au bord (K=2.40) car en phase synchronisée profonde Ω explose (+1.9) et sa variance suit l'amplitude, masquant le signal critique. MAIS un **pic local net existe à K=1.60 = Kc** (std=0.766).
+
+**Diagnostic** : Var(Ω) brut est amplitude-dépendant. Sur Ising/RBN Ω restait borné (~0.01-0.4) → pic propre ; sur Kuramoto Ω va à +1.9 → contamination de bord.
+
+**Fix — coefficient de variation** : χ_info = CV(Ω) = std_réalisations(Ω) / ⟨|Ω|⟩_réalisations. Retire la dépendance d'amplitude.
+
+| Observable | localise Kc Kuramoto | localise Tc Ising |
+|-----------|---------------------|-------------------|
+| χ classique | Δ=−0.296 | Δ=+0.064 |
+| zéro-crossing Ω | Δ=−0.196 | — (Ω>0 partout) |
+| τ_corr | Δ=−0.096 | — |
+| std(Ω) brut | Δ=+0.804 (✗ bord) | Δ=−0.003 ✓ |
+| **CV(Ω) = χ_info** | **Δ=+0.004 ✓** | **Δ=−0.003 ✓** |
+
+**Finding central consolidé** : χ_info = CV(Ω) = std(Ω)/⟨|Ω|⟩ est l'**observable universel de localisation de criticalité** du programme. Localise Tc Ising (Δ=−0.003) ET Kc Kuramoto (Δ=+0.004), mieux que tous les observables classiques (χ, τ_corr) et que le zéro-crossing. Robuste à l'amplitude, transversal aux trois classes (thermo redondance-dominée, dynamique à bascule de régime, synchronisation).
+
+**Arc épistémique** (pattern du programme) : hypothèse (std universel sur 2 systèmes) → réfutation (Kuramoto, amplitude) → diagnostic (pic local présent mais contaminé) → raffinement (normalisation CV) → validation double (Tc + Kc). La forme brute était une généralisation prématurée ; la normalisation est load-bearing.
+
+**Bascule de régime — signe OPPOSÉ selon classe** : zéro-crossing de mean(Ω) localise la transition dans RBN ET Kuramoto, mais en sens inverse :
+- RBN : ordre (K<Kc) = redondance (Ω>0), chaos (K>Kc) = synergie (Ω<0)
+- Kuramoto : désync (K<Kc) = synergie (Ω<0), sync (K>Kc) = redondance (Ω>0)
+- Cohérent : oscillateurs synchronisés se copient (redondance) ; nœuds RBN gelés se copient (redondance). La redondance = phase « ordonnée/copiante » de chaque système, qui est K<Kc pour RBN mais K>Kc pour Kuramoto.
+
+**Conséquence testable (#9)** : CV(Ω) localise le point critique à finite-size bias quasi-nul pour tout système à transition. À tester : scaling L (Ising L=16/32/64/128) — la précision de CV(Ω) sur Tc dépend-elle de L comme χ (shift ~L^{−1/ν}) ou reste-t-elle collée ?
