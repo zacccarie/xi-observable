@@ -174,9 +174,38 @@ confirmer que le coin reste vide. La relation quasi-déterministe à K=3 est for
 évidence. Distinction maintenue : synergie I/O (fonction) ≠ synergie émergente
 inter-nœuds (réseau) — mais les deux suivent le même paramètre (conjonctivité).
 
-## Φ, recadré
+## Φ, recadré — premier pas (B v0, `koopman_phi.py`)
 
 Φ = information utile persistante. Dans ce cadre :
 **Φ = information synergique persistante = ce qui émerge (Ω<0, irréductible) ET
 dure (modes Koopman persistants).** Pas « modes persistants » tout court — modes
-persistants qui portent de l'information irréductible. Test futur : Koopman × Ω.
+persistants qui portent de l'information irréductible.
+
+### B v0 — faisabilité (DMD sur Kuramoto)
+
+DMD tronqué (SVD, energy 99.9%) → spectre Koopman propre |λ|∈[0.85,1]. Pour
+chaque mode : persistance |λ|, et participation ratio PR (proxy v0 de
+l'irréductibilité). Φ = persistant (|λ|≥0.9) ∩ distribué (PR > médiane).
+
+**Findings** :
+1. **corr(|λ|, PR) = −0.07 → axes ⊥.** Persistance Koopman et distribution sont
+   indépendantes. **Φ est un filtre à 2 critères NON-TRIVIAL** : ni la persistance
+   seule ni la distribution seule ne le définissent. Valide la définition à deux axes.
+2. **Dimension effective Koopman s'effondre à la synchronisation** : rang effectif
+   50→47→35→33→43→6→4 quand K monte. Désync = N modes indépendants (haute dim,
+   triviaux) ; sync = poignée de modes collectifs (basse dim, redondants). Chute
+   brutale juste au-dessus de Kc.
+3. **|Φ| ne pique PAS à l'edge** — suit le rang qui décroît avec K. Le proxy PR ne
+   capte pas l'irréductibilité réelle.
+
+**Bug méthodologique trouvé/corrigé** : DMD naïf `A = X1·pinv(X0)` sur X0
+rank-deficient produit des modes spurieux (|λ| jusqu'à 6500, non physiques). Fix =
+SVD tronquée (exact DMD). Garde-fou : un spectre Koopman doit avoir |λ|~1 ; toute
+valeur ≫1 signale un DMD mal conditionné.
+
+**Limite v0** : PR = proxy grossier ; le Φ complet exige une attribution de synergie
+PAR MODE (PID spectral : Ω de la projection sur chaque mode Koopman vs le reste),
+pas un participation ratio. Établi : (a) DMD propre faisable, (b) les deux axes de Φ
+sont distincts, (c) la dimension effective marque la synchronisation. Reste : la
+vraie synergie de mode. **Φ = synergie persistante reste largement ouvert — chapitre
+suivant.**
