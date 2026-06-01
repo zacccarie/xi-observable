@@ -1,0 +1,12 @@
+{
+  "L": 128,
+  "F": 0.037,
+  "k": 0.06,
+  "n_patches": 500,
+  "corr_omega_grad": 0.145638355241104,
+  "omega_bulk": 1.5879711177967009,
+  "omega_interface": 1.951585056530733,
+  "delta": 0.36361393873403225,
+  "frac_syn_bulk": 0.0,
+  "frac_syn_interface": 0.0
+}
