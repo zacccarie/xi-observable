@@ -11,13 +11,23 @@ Dérive 1 → localiser la criticalité (banal). Recadré → **mesurer l'ÉMERG
 = information irréductible (synergie, Ω<0). Dérive 2 → accumulation de jouets.
 Recadré → **brancher l'instrument sur du réel** (LLM).
 
-## Thèse centrale (solide)
+## Thèse centrale (recadrée — résultat le plus robuste)
 
-> **L'émergence est la non-séparabilité de la règle (C), qui se manifeste
-> SIMULTANÉMENT comme synergie informationnelle (Ω<0) et instabilité dynamique
-> (chaos). Une seule propriété — la conjonctivité de la règle — à deux visages.
-> L'émergence nette est maximale à l'edge of chaos, mais fugace par nature
-> (portée par les modes transitoires). Φ = la rare fraction stabilisée.**
+> **La synergie (émergence info-théorique vraie) est RARE ; la redondance est
+> ubiquitaire.** La complexité observable (transitions de phase, synchronisation,
+> motifs de Turing, chaos, fractales, bifurcations, activations LLM) est massivement
+> REDONDANTE — belle, structurée, mais réductible à ses parties. La nature couple par
+> moyennes (diffusion, alignement) = monotone = redondance. La synergie exige un
+> couplage NON-SÉPARABLE (conjonctif, type XOR), rare.
+
+> **Mécanisme** : cette non-séparabilité est IDENTIQUE à l'instabilité dynamique —
+> **émergence ≡ chaos**, deux faces d'une seule propriété (la conjonctivité de la règle).
+> L'émergence nette est maximale à l'edge of chaos mais fugace (modes transitoires).
+> **Φ** = la rare fraction stabilisée (chaos modéré + fort couplage = régime du vivant).
+
+> **Corollaire** : structure visible ≠ émergence. L'œil et les observables classiques
+> voient de la richesse ; l'O-information voit de la redondance. Testé sur 3 dimensions
+> (espace, temps, paramètres) : structure partout, synergie quasi-nulle.
 
 Répond à « comment des règles simples font-elles émerger de la complexité ? » :
 seules les règles irréductibles émergent ; la criticalité les révèle ; l'émergence
