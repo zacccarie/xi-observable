@@ -90,11 +90,37 @@ représentationnelle, pas l'édge of chaos. Pour l'edge génératif → mesure D
 Lyapunov de la trajectoire de génération vs T, dimension effective Koopman (comme CML),
 ou autocorrélation temporelle des hidden states.
 
+## Mesure DYNAMIQUE — l'edge génératif trouvé (`llm_generative_dynamics.py`)
+
+Ω statique ratait l'edge. Mesure dynamique (DMD de la trajectoire de génération vs T) :
+dimension effective Koopman, ⟨|λ|⟩ persistance, entropie spectrale.
+
+| T | répétition | dim_eff | ⟨|λ|⟩ | H_spec |
+|---|-----------|---------|-------|--------|
+| 0.3 | 0.59 | 20 | 0.72 | 0.17 |
+| 0.7-1.1 | 0.39→0.12 | 27→35 | **0.65 (min)** | 0.14 (plat) |
+| **1.3** | 0.06 | 44 | 0.74 ↑ | **0.31 (saut ×2)** |
+| 1.6-2.0 | 0.01 | 51 | 0.80 | 0.40 |
+
+**Edge of chaos génératif = transition de phase dynamique à T≈1.2.** QUATRE observables
+convergent : répétition atteint son plancher, dim_eff inflexion, ⟨|λ|⟩ saute du min au
+plateau, H_spec ×2. En dessous : régime cohérent (variété confinée, modes fluides) ;
+au-dessus : chaotique (dim saturée, modes random). Sweet spot génération qualité
+(T≈0.7-1.0, ⟨|λ|⟩ min) = régime cohérent juste avant l'edge.
+
+**La mesure dynamique RÉUSSIT là où la statique échouait.** L'edge existe
+dynamiquement dans le LLM ; l'émergence (synergie) n'y pique pas (elle suit la
+cohérence statique). Signature de l'edge = transition spectrale, pas pic de synergie —
+cohérent avec B v1 (émergence présente mais fugace à l'edge). Confirme : **edge of
+chaos = propriété DYNAMIQUE, invisible à Ω statique.**
+
+Caveat : pythia-160m, couche 6, 8 prompts, 1 seed. Signal net (4 observables) mais
+modeste en taille. Solidif : multi-seed, multi-couche, multi-taille.
+
 ## Statut
 
-L'instrument fonctionne sur du réel : signaux non-triviaux, interprétables, dont DEUX
-ont contredit mes prédictions (donc informatifs) — embedding synergique (pas le calcul),
-synergie suit l'ordre (pas l'edge). Le pont jouets → réel est établi. Acquis transversal :
-**la synergie statique inter-dimension d'un LLM mesure la cohérence représentationnelle,
-distincte de l'émergence dynamique des jouets.** Prochain pas : mesure dynamique de
-l'édge génératif (Lyapunov/Koopman de la trajectoire vs température).
+L'instrument fonctionne sur du réel. TROIS relevés LLM : (1) depth — embedding synergique
+(pas le calcul) ; (2) génération statique — Ω suit l'ordre (rate l'edge) ; (3) génération
+dynamique — edge of chaos à T≈1.2 (transition spectrale, 4 observables convergentes).
+Pont jouets → réel établi et bouclé. Acquis : **edge of chaos = dynamique ; Ω statique
+inter-dim = cohérence représentationnelle. Deux observables distincts, deux phénomènes.**
