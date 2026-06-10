@@ -1,0 +1,182 @@
+{
+ "preregistered": {
+  "gw_grok": [
+   0.0072513263006781375,
+   0.00567042866270697,
+   0.01484221913873065,
+   0.0012616666674174638,
+   0.002862176524419828,
+   0.00407214324083923
+  ],
+  "gw_ctrl": [
+   0.0,
+   0.0,
+   0.00027967624587533493,
+   0.0
+  ],
+  "binary_separation": true,
+  "verdict": "KEEP \u0393-poids (r\u00e9plication \u2014 go phase pythia)"
+ },
+ "rows": [
+  {
+   "wd": "wd1.0",
+   "seed": 0,
+   "t_grok": 1250,
+   "window_hi": 1100,
+   "gw": 0.0072513263006781375,
+   "best_ch": "blocks.0.attn.in_proj_weight",
+   "per_ch": {
+    "tok.weight": 0.0,
+    "head.weight": 0.0,
+    "blocks.0.attn.in_proj_weight": 0.0072513263006781375,
+    "blocks.1.attn.in_proj_weight": 0.002434254924449109,
+    "blocks.0.mlp.0.weight": 0.0,
+    "blocks.1.mlp.0.weight": 0.0
+   }
+  },
+  {
+   "wd": "wd1.0",
+   "seed": 1,
+   "t_grok": 1300,
+   "window_hi": 1100,
+   "gw": 0.00567042866270697,
+   "best_ch": "blocks.0.attn.in_proj_weight",
+   "per_ch": {
+    "tok.weight": 0.0,
+    "head.weight": 0.0,
+    "blocks.0.attn.in_proj_weight": 0.00567042866270697,
+    "blocks.1.attn.in_proj_weight": 0.0014924397813761748,
+    "blocks.0.mlp.0.weight": 0.0,
+    "blocks.1.mlp.0.weight": 0.0
+   }
+  },
+  {
+   "wd": "wd1.0",
+   "seed": 2,
+   "t_grok": 1500,
+   "window_hi": 1100,
+   "gw": 0.01484221913873065,
+   "best_ch": "blocks.0.attn.in_proj_weight",
+   "per_ch": {
+    "tok.weight": 0.0,
+    "head.weight": 0.0,
+    "blocks.0.attn.in_proj_weight": 0.01484221913873065,
+    "blocks.1.attn.in_proj_weight": 0.002633285564113958,
+    "blocks.0.mlp.0.weight": 0.0,
+    "blocks.1.mlp.0.weight": 0.0
+   }
+  },
+  {
+   "wd": "wd1.0",
+   "seed": 10,
+   "t_grok": 1250,
+   "window_hi": 1100,
+   "gw": 0.0012616666674174638,
+   "best_ch": "blocks.0.attn.in_proj_weight",
+   "per_ch": {
+    "tok.weight": 0.0,
+    "head.weight": 0.0,
+    "blocks.0.attn.in_proj_weight": 0.0012616666674174638,
+    "blocks.1.attn.in_proj_weight": 0.0,
+    "blocks.0.mlp.0.weight": 0.0,
+    "blocks.1.mlp.0.weight": 0.0
+   }
+  },
+  {
+   "wd": "wd1.0",
+   "seed": 11,
+   "t_grok": 1200,
+   "window_hi": 1100,
+   "gw": 0.002862176524419828,
+   "best_ch": "blocks.0.attn.in_proj_weight",
+   "per_ch": {
+    "tok.weight": 0.0,
+    "head.weight": 0.0,
+    "blocks.0.attn.in_proj_weight": 0.002862176524419828,
+    "blocks.1.attn.in_proj_weight": 0.0,
+    "blocks.0.mlp.0.weight": 0.0,
+    "blocks.1.mlp.0.weight": 0.0
+   }
+  },
+  {
+   "wd": "wd1.0",
+   "seed": 12,
+   "t_grok": 1050,
+   "window_hi": 950,
+   "gw": 0.00407214324083923,
+   "best_ch": "blocks.0.attn.in_proj_weight",
+   "per_ch": {
+    "tok.weight": 0.0,
+    "head.weight": 0.0,
+    "blocks.0.attn.in_proj_weight": 0.00407214324083923,
+    "blocks.1.attn.in_proj_weight": 0.0,
+    "blocks.0.mlp.0.weight": 0.0,
+    "blocks.1.mlp.0.weight": 0.0
+   }
+  },
+  {
+   "wd": "wd0.0",
+   "seed": 0,
+   "t_grok": null,
+   "window_hi": 1100,
+   "gw": 0.0,
+   "best_ch": "tok.weight",
+   "per_ch": {
+    "tok.weight": 0.0,
+    "head.weight": 0.0,
+    "blocks.0.attn.in_proj_weight": 0.0,
+    "blocks.1.attn.in_proj_weight": 0.0,
+    "blocks.0.mlp.0.weight": 0.0,
+    "blocks.1.mlp.0.weight": 0.0
+   }
+  },
+  {
+   "wd": "wd0.0",
+   "seed": 1,
+   "t_grok": null,
+   "window_hi": 1100,
+   "gw": 0.0,
+   "best_ch": "tok.weight",
+   "per_ch": {
+    "tok.weight": 0.0,
+    "head.weight": 0.0,
+    "blocks.0.attn.in_proj_weight": 0.0,
+    "blocks.1.attn.in_proj_weight": 0.0,
+    "blocks.0.mlp.0.weight": 0.0,
+    "blocks.1.mlp.0.weight": 0.0
+   }
+  },
+  {
+   "wd": "wd0.0",
+   "seed": 10,
+   "t_grok": null,
+   "window_hi": 1100,
+   "gw": 0.00027967624587533493,
+   "best_ch": "blocks.0.mlp.0.weight",
+   "per_ch": {
+    "tok.weight": 0.0,
+    "head.weight": 0.0,
+    "blocks.0.attn.in_proj_weight": 0.0,
+    "blocks.1.attn.in_proj_weight": 0.0,
+    "blocks.0.mlp.0.weight": 0.00027967624587533493,
+    "blocks.1.mlp.0.weight": 0.0
+   }
+  },
+  {
+   "wd": "wd0.0",
+   "seed": 11,
+   "t_grok": null,
+   "window_hi": 1100,
+   "gw": 0.0,
+   "best_ch": "tok.weight",
+   "per_ch": {
+    "tok.weight": 0.0,
+    "head.weight": 0.0,
+    "blocks.0.attn.in_proj_weight": 0.0,
+    "blocks.1.attn.in_proj_weight": 0.0,
+    "blocks.0.mlp.0.weight": 0.0,
+    "blocks.1.mlp.0.weight": 0.0
+   }
+  }
+ ]
+}

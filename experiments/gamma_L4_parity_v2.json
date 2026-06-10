@@ -1,0 +1,141 @@
+{
+ "preregistered": {
+  "width": 256,
+  "delayed_ns": [
+   1300
+  ],
+  "nogrok_ns": [
+   500,
+   1000
+  ],
+  "cap": 5400,
+  "gamma_window_delayed": [
+   0.0028323695820525394,
+   0.004712050679626872
+  ],
+  "gamma_window_nogrok": [
+   0.0,
+   0.0001097548093209736,
+   0.0,
+   0.00044205448902874734
+  ],
+  "binary_separation": true,
+  "excluded_instant": [],
+  "verdict": "KEEP L4 (\u0393 g\u00e9n\u00e9ralise : parit\u00e9 + MLP)"
+ },
+ "rows": [
+  {
+   "dir": "run_parityN1300_s30",
+   "seed": 30,
+   "n_train": 1300,
+   "t_mem": 100,
+   "t_grok": 1700,
+   "window": [
+    150,
+    1600
+   ],
+   "theta": 0.005213462320340213,
+   "too_short": false,
+   "gamma_window": 0.0028323695820525394,
+   "cls": "delayed"
+  },
+  {
+   "dir": "run_parityN1300_s31",
+   "seed": 31,
+   "n_train": 1300,
+   "t_mem": 100,
+   "t_grok": 1700,
+   "window": [
+    150,
+    1600
+   ],
+   "theta": 0.00444263473969653,
+   "too_short": false,
+   "gamma_window": 0.004712050679626872,
+   "cls": "delayed"
+  },
+  {
+   "dir": "run_parityN500_s30",
+   "seed": 30,
+   "n_train": 500,
+   "t_mem": 100,
+   "t_grok": null,
+   "window": [
+    150,
+    5400
+   ],
+   "theta": 0.0059145627599147465,
+   "too_short": false,
+   "gamma_window": 0.0,
+   "cls": "nogrok"
+  },
+  {
+   "dir": "run_parityN500_s31",
+   "seed": 31,
+   "n_train": 500,
+   "t_mem": 100,
+   "t_grok": null,
+   "window": [
+    150,
+    5400
+   ],
+   "theta": 0.005433310330085544,
+   "too_short": false,
+   "gamma_window": 0.0001097548093209736,
+   "cls": "nogrok"
+  },
+  {
+   "dir": "run_parityN1000_s30",
+   "seed": 30,
+   "n_train": 1000,
+   "t_mem": 100,
+   "t_grok": null,
+   "window": [
+    150,
+    5400
+   ],
+   "theta": 0.004136595450136498,
+   "too_short": false,
+   "gamma_window": 0.0,
+   "cls": "nogrok"
+  },
+  {
+   "dir": "run_parityN1000_s31",
+   "seed": 31,
+   "n_train": 1000,
+   "t_mem": 100,
+   "t_grok": null,
+   "window": [
+    150,
+    5400
+   ],
+   "theta": 0.002914686426184,
+   "too_short": false,
+   "gamma_window": 0.00044205448902874734,
+   "cls": "nogrok"
+  }
+ ],
+ "pilot": [
+  {
+   "seed": 5,
+   "n_train": 1100,
+   "t_grok": null
+  },
+  {
+   "seed": 5,
+   "n_train": 1300,
+   "t_grok": 6800
+  },
+  {
+   "seed": 5,
+   "n_train": 1500,
+   "t_grok": 1300
+  },
+  {
+   "seed": 5,
+   "n_train": 1700,
+   "t_grok": 300
+  }
+ ],
+ "runtime_s": 234.955952167511
+}

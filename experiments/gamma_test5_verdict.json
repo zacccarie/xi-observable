@@ -1,0 +1,55 @@
+{
+ "rows": [
+  {
+   "frac": 0.2,
+   "seed": 42,
+   "t_grok": null,
+   "gw": 0.0,
+   "ch": "L0.qkv",
+   "plateau": null
+  },
+  {
+   "frac": 0.2,
+   "seed": 43,
+   "t_grok": null,
+   "gw": 3.720119029686535e-07,
+   "ch": "L0.qkv",
+   "plateau": null
+  },
+  {
+   "frac": 0.5,
+   "seed": 40,
+   "t_grok": 7200,
+   "gw": 8.541016965835444e-07,
+   "ch": "L0.mlp",
+   "plateau": 5900
+  },
+  {
+   "frac": 0.5,
+   "seed": 41,
+   "t_grok": 7200,
+   "gw": 0.009876124195517658,
+   "ch": "L0.mlp",
+   "plateau": 5500
+  },
+  {
+   "frac": 0.5,
+   "seed": 42,
+   "t_grok": 4200,
+   "gw": 1.345553805634702e-05,
+   "ch": "L2.mlp",
+   "plateau": 3000
+  },
+  {
+   "frac": 0.5,
+   "seed": 43,
+   "t_grok": 8900,
+   "gw": 8.03744338267259e-06,
+   "ch": "L0.qkv",
+   "plateau": 7700
+  }
+ ],
+ "w5a": true,
+ "w5b": false,
+ "verdict": "KILL (grokker sourd en poids)"
+}
