@@ -94,7 +94,8 @@ def gamma_series(steps, acts_list, seed=0, rank_lo=RANK_LO):
 def run_one(seed: int = 0, frac: float = 0.5, wd: float = 1.0,
             steps: int = 8000, tag: str = "pilot", use_lora: bool = True,
             lr: float = 1e-3, lora_r: int = 16,
-            probe_mode: str = "last", rank_lo: int = RANK_LO) -> dict:
+            probe_mode: str = "last", rank_lo: int = RANK_LO,
+            init_random: bool = False, loc_lambda: float = 0.0) -> dict:
     """probe_mode :
     "last" (v1) — dernière position du prompt, couches LAYERS (2,4,6).
     "all4" (Γ v2) — 4 positions [a][+][b][=] × 7 couches (0=emb..6) = 28
@@ -137,13 +138,28 @@ def run_one(seed: int = 0, frac: float = 0.5, wd: float = 1.0,
                 torch.tensor(mask_all[idx], device=device),
                 torch.tensor(y_all[idx], device=device))
 
-    model = AutoModelForCausalLM.from_pretrained(MODEL).to(device)
+    if init_random:
+        # (a) ZÉRO pré-compétence : même archi, poids réinitialisés —
+        # contrôle décisif de l'hypothèse pré-compétence → routes diffuses
+        from transformers import AutoConfig
+        model = AutoModelForCausalLM.from_config(
+            AutoConfig.from_pretrained(MODEL)).to(device)
+    else:
+        model = AutoModelForCausalLM.from_pretrained(MODEL).to(device)
     if use_lora:
         lcfg = LoraConfig(r=lora_r, lora_alpha=2 * lora_r, lora_dropout=0.0,
                           target_modules=["query_key_value", "dense"])
         model = get_peft_model(model, lcfg)
     opt = torch.optim.AdamW([p for p in model.parameters() if p.requires_grad],
                             lr=lr, weight_decay=wd)
+
+    # (b) group-lasso de localisation : Σ_m ||W_m − W_m^init||_F pousse le
+    # changement total à se CONCENTRER dans peu de matrices (monitorabilité
+    # by design — forcer la route concentrée)
+    loc_pairs = []
+    if loc_lambda > 0:
+        named = dict(model.named_parameters())
+        loc_pairs = [(named[n], named[n].detach().clone()) for n in WTENSORS_FULL]
 
     def last_pos_logits(out_logits, mask):
         last = mask.sum(dim=1) - 1
@@ -211,6 +227,9 @@ def run_one(seed: int = 0, frac: float = 0.5, wd: float = 1.0,
         model.train(); opt.zero_grad()
         lg = last_pos_logits(model(input_ids=ii, attention_mask=mm).logits, mm)
         loss = F.cross_entropy(lg, yy)
+        if loc_pairs:
+            loss = loss + loc_lambda * sum(torch.norm(pp - p0)
+                                           for pp, p0 in loc_pairs)
         loss.backward(); opt.step()
         if step % EVERY == 0:
             pa = probe_acts()
@@ -229,11 +248,12 @@ def run_one(seed: int = 0, frac: float = 0.5, wd: float = 1.0,
 
     out = {"seed": seed, "frac": frac, "wd": wd, "steps": steps, "tag": tag,
            "use_lora": use_lora, "lr": lr, "lora_r": lora_r,
-           "probe_mode": probe_mode,
+           "probe_mode": probe_mode, "init_random": init_random,
+           "loc_lambda": loc_lambda,
            "t_grok": t_grok, "t_mem": t_mem, "traj": traj, "gammas": gammas,
            "elapsed_s": _t.time() - t0}
     os.makedirs("/results", exist_ok=True)
-    with open(f"/results/{tag}_frac{frac}_wd{wd}_s{seed}.json", "w") as f:
+    with open(f"/results/{tag}_frac{frac}_wd{wd}_lr{lr}_lam{loc_lambda}_s{seed}.json", "w") as f:
         json.dump(out, f)
     vol.commit()
     print(f"[{tag} frac={frac} wd={wd} s{seed}] t_mem={t_mem} t_grok={t_grok} "
@@ -334,6 +354,43 @@ def test4():
             run_one.spawn(seed, frac, 0.1, 8000, "test4", False, 1e-4, 16,
                           "wtensors")
     print("spawned 4 test4 runs (Γ-poids)")
+
+
+@app.local_entrypoint()
+def test_ab():
+    """Vagues principales (calibration pilot_ab) :
+    (a) H-préco : random-init lr=1e-3, seeds 52-55 — fraction audible parmi
+        grokkers à plateau ≥ 500 attendue ≥ 3/4 (pilote : 10/12 tenseurs !)
+        vs pré-entraîné 1/4. KILL : muets aussi.
+    (b) re-sweep λ ∈ {1e-3, 3e-3, 1e-2} s50 (collision résolue) : λ* =
+        préserve grok + force l'audibilité. Puis 4 seeds au λ*."""
+    for seed in (52, 53, 54, 55):
+        run_one.spawn(seed, 0.5, 0.1, 12000, tag="testA_rand", use_lora=False,
+                      lr=1e-3, probe_mode="wfull", init_random=True)
+    for lam in (1e-3, 3e-3, 1e-2):
+        run_one.spawn(50, 0.5, 0.1, 12000, tag="pilotB2_loc", use_lora=False,
+                      lr=1e-4, probe_mode="wfull", loc_lambda=lam)
+    print("spawned 7 test_ab runs")
+
+
+@app.local_entrypoint()
+def pilot_ab():
+    """(a) random-init ×3 (calibration lr from-scratch) + (b) λ-sweep ×3.
+    PRÉ-ENREGISTRÉ (vagues principales après calibration) :
+    (a) H-préco : parmi les random-init qui grokent, fraction audible
+        (Γw>0.002 sur ≥1 des 12 tenseurs) ≥ 3/4, vs 1/4 pré-entraîné
+        (test5/6). KILL : random-init aussi muets → la diffusion n'est pas
+        due au pré-entraînement.
+    (b) H-loc : au λ* qui préserve le grok, fraction audible ≥ 3/4.
+        KILL : audibilité inchangée à λ non-létal → route diffuse non
+        forçable par group-lasso. Mesurer la taxe (Δt_grok)."""
+    for seed, lr_ in ((50, 1e-3), (51, 1e-3), (50, 1e-4)):
+        run_one.spawn(seed, 0.5, 0.1, 12000, tag="pilotA_rand", use_lora=False,
+                      lr=lr_, probe_mode="wfull", init_random=True)
+    for lam in (1e-4, 1e-3, 1e-2):
+        run_one.spawn(50, 0.5, 0.1, 12000, tag="pilotB_loc", use_lora=False,
+                      lr=1e-4, probe_mode="wfull", loc_lambda=lam)
+    print("spawned 6 pilot_ab runs")
 
 
 @app.local_entrypoint()

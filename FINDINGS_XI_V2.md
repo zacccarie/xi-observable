@@ -705,3 +705,40 @@ sonde qui pourrait les unifier est celle des poids.
    périmètre final exact (sismographe de réallocation, substrat au repos,
    sonde-dépendant). Candidat : workshop NeurIPS interp / ICLR SciForDL.
 4. s_net post-hoc parity gratuit ; MC3 ; latent-flow ; Ξ niveau MON.
+
+---
+
+# (a) Pré-compétence → diffusion : CONFIRMÉ 4/4 vs 1/4 (2026-06-10, ~14h)
+
+Design décisif : pythia-70m **réinitialisé aléatoirement** (`init_random=True`)
+— même archi, même tâche, même pipeline, zéro pré-compétence par construction.
+`modal_gamma_llm.py::pilot_ab/test_ab`, tags pilotA_rand/testA_rand.
+
+| run (random-init, lr=1e-3) | plateau | canaux audibles /12 | max Γw |
+|---|---|---|---|
+| s50 (pilote) | 700 | **10** | 0.050 |
+| s52 | 2600 | 1 | 0.0029 |
+| s54 | 6000 | **12** | 0.024 |
+| s55 | 1000 | **12** | 0.086 |
+| s51, s53 | exclus (grok instantané, plateau < 500) | — | — |
+
+**4/4 grokkers from-scratch audibles** (critère Γw>0.002 sur ≥1 tenseur ;
+3/4 hurlent sur 10-12 tenseurs) **vs 1/4 pré-entraîné** (test5/6).
+**H-préco KEEP : le pré-entraînement est la source des routes diffuses** —
+le from-scratch construit du neuf (chantier localisé multi-tenseurs,
+audible), le pré-entraîné recâble l'existant (diffus, silencieux).
+Implication frontière : plus un modèle est pré-compétent, moins ses
+apprentissages sont monitorables par exposants internes.
+
+# (b) Régularisation pro-localisation (group-lasso ΔW) : KILL au pilote
+
+λ ∈ {1e-4, 1e-3, 3e-3, 1e-2} (s50, pré-entraîné, frac 0.5) : grok préservé
+partout (et ACCÉLÉRÉ par λ fort : 7400 → 2400 — l'ancrage à l'init
+régularise comme le wd) mais **audibilité nulle** (0-1 canal limite à
+0.002). La group-lasso Σ‖ΔW_m‖_F pénalise le VOLUME de changement par
+matrice, pas sa STRUCTURE : un recâblage diffus de rang plein la satisfait
+sans produire de direction croissante détectable.
+**Voie suivante (non dépensée)** : pénalité SPECTRALE — nuclear norm ‖ΔW‖*
+(pousser le changement vers le rang faible = fabriquer la direction
+concentrée que Γ écoute). Monitorabilité by design reste ouverte, la
+première serrure n'était pas la bonne.
