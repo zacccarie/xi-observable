@@ -742,3 +742,47 @@ sans produire de direction croissante détectable.
 (pousser le changement vers le rang faible = fabriquer la direction
 concentrée que Γ écoute). Monitorabilité by design reste ouverte, la
 première serrure n'était pas la bonne.
+
+---
+
+# Jalon 0 POC « Auditable Fine-Tuning » — régularizer KILL, pivot paramétrisation (2026-06-10 ~15h)
+
+Pénalité nuclear-norm Σ‖ΔW_m‖_* (rang faible forcé) vs group-lasso Frobenius
+(échouée). s50 pré-entraîné, frac 0.5, λ-sweep, sonde 12 tenseurs.
+SVD-backward ×12/step trop lourde → amortie 1 step/5 (×5 λ), timeout 5400.
+
+| λ | t_grok | taxe | transparence /12 |
+|---|---|---|---|
+| 3e-4 | 5300 | −1900 (accél.) | 0 |
+| 1e-3 | 5000 | −2200 | 0 |
+| 3e-3 | 2500 | −4700 | 1 (limite) |
+| 1e-2 | jamais | létal | 0 |
+
+**KILL pré-enregistré** : transparence ≤ 1/12 à tout λ non-létal. La nuclear
+norm ACCÉLÈRE le grok (ancrage régularisant) mais ne RELOCALISE pas la
+formation dans des directions audibles. Deux familles de régularizers
+(volume Frobenius, rang nuclear) échouent → **« rendre auditable en ajoutant
+un terme à la loss » ne marche pas** sur ce testbed. Le recâblage diffus
+résiste : rétrécir/contraindre ΔW ne le concentre pas dans les directions
+que Γ écoute.
+
+## Le pivot révélé (plus solide que le régularizer)
+
+**Auditabilité par PARAMÉTRISATION, pas par régularisation.** Fine-tune via
+adaptateur de rang suffisant (LoRA r assez grand pour groker) → ΔW = BA EST
+rang-r par construction → la formation vit exactement dans ces r directions,
+observées directement, sans Γ, sans angle mort possible. L'adaptateur n'est
+pas une contrainte sur la formation : il EST la formation, intégralement
+visible. L'échec LoRA antérieur (test L5a) était CAPACITÉ (r=16 trop petit
+pour groker), pas audibilité — un LoRA de rang suffisant qui groke serait
+auditable à 100%. POC reprise : sweep r ∈ {32,64,128,256} jusqu'au grok,
+puis montrer que les r directions captent toute la formation (vs full-FT
+diffus 3/4 invisible). Garantie structurelle, pas pari sur un levier.
+
+## Bilan POC
+
+- POC « Auditable FT » version régularizer : MORTE (2 leviers, kill propre).
+- Version paramétrisation (LoRA-rang-suffisant) : reprise, mieux fondée.
+- Résultat négatif solide pour papier-warning : monitoring interne =
+  angle mort en modèle pré-entraîné, NON comblable par régularisation.
+Coût Modal session ~$18/20.

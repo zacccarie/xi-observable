@@ -14,6 +14,7 @@ import json
 import time
 import numpy as np
 import torch
+torch.set_num_threads(4)
 import torch.nn as nn
 import torch.nn.functional as F
 
@@ -26,7 +27,7 @@ from gamma_universality import excess_rates
 RESULTS = os.path.join(HERE, "gamma_cstab_cells")
 DEVICE = torch.device("cpu")
 PILOT_SEED, FRESH = 5, (30, 31)
-DELAYED = (1500, 18000)
+DELAYED = (1500, 11000)
 
 
 # ---------------------------------------------------------------- cellule 1
@@ -50,7 +51,7 @@ class TinyTransformer(nn.Module):
         return (self.head(a), a) if want_act else self.head(a)
 
 
-def run_parity_transformer(n_train, seed, steps=20000, every=100, wd=1e-2):
+def run_parity_transformer(n_train, seed, steps=12000, every=100, wd=1e-2):
     outdir = os.path.join(xg.CKPT_ROOT, f"run_tfparityN{n_train}_s{seed}")
     if os.path.exists(os.path.join(outdir, "traj.json")):
         return json.load(open(os.path.join(outdir, "traj.json")))
@@ -80,6 +81,9 @@ def run_parity_transformer(n_train, seed, steps=20000, every=100, wd=1e-2):
                                 acts_test=h.cpu().numpy().astype(np.float16))
             traj.append({"step": step, "train_acc": tr_a, "val_acc": te_a})
             model.train()
+            if (step > 1500 and len(traj) >= 3
+                    and all(t["val_acc"] > 0.9 for t in traj[-3:])):
+                break
     t_grok = next((t["step"] for t in traj if t["val_acc"] > 0.9), None)
     meta = {"seed": seed, "arch": "transformer", "n_train": n_train,
             "t_grok": t_grok, "traj": traj, "elapsed_s": time.time() - t0}
@@ -104,7 +108,7 @@ class MlpModAdd(nn.Module):
         return (self.head(a), a) if want_act else self.head(a)
 
 
-def run_modadd_mlp(frac, seed, steps=20000, every=100, wd=1.0):
+def run_modadd_mlp(frac, seed, steps=12000, every=100, wd=1.0):
     tag = str(frac).replace(".", "p")
     outdir = os.path.join(xg.CKPT_ROOT, f"run_mlpmodF{tag}_s{seed}")
     if os.path.exists(os.path.join(outdir, "traj.json")):
@@ -140,6 +144,9 @@ def run_modadd_mlp(frac, seed, steps=20000, every=100, wd=1.0):
                                 acts_test=h.cpu().numpy().astype(np.float16))
             traj.append({"step": step, "train_acc": tr_a, "val_acc": te_a})
             model.train()
+            if (step > 1500 and len(traj) >= 3
+                    and all(t["val_acc"] > 0.9 for t in traj[-3:])):
+                break
     t_grok = next((t["step"] for t in traj if t["val_acc"] > 0.9), None)
     meta = {"seed": seed, "arch": "mlp", "frac": frac, "t_grok": t_grok,
             "traj": traj, "elapsed_s": time.time() - t0}

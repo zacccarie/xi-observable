@@ -18,6 +18,7 @@ import json
 import time
 import numpy as np
 import torch
+torch.set_num_threads(4)
 import torch.nn as nn
 import torch.nn.functional as F
 
@@ -30,14 +31,14 @@ from gamma_universality import excess_rates
 RESULTS = os.path.join(HERE, "gamma_archs_parity")
 DEVICE = torch.device("cpu")
 N_BITS, K_PARITY = 30, 3
-WD, STEPS, EVERY = 1e-2, 20000, 100
+WD, STEPS, EVERY = 1e-2, 12000, 100
 PILOT_SEED, FRESH = 5, (30, 31)
-DELAYED = (1500, 18000)
+DELAYED = (1500, 11000)
 
 
 class Conv1dNet(nn.Module):
     """Conv1d sur la séquence de 30 bits — CG local."""
-    def __init__(self, w=64):
+    def __init__(self, w=32):
         super().__init__()
         self.c1 = nn.Conv1d(1, w, 5, padding=2)
         self.c2 = nn.Conv1d(w, w, 5, padding=2)
@@ -52,7 +53,7 @@ class Conv1dNet(nn.Module):
 class DeepSetsNet(nn.Module):
     """φ par (position one-hot-lite, bit) puis somme — CG permutationnel
     sur les paires (index, valeur)."""
-    def __init__(self, w=96):
+    def __init__(self, w=64):
         super().__init__()
         self.phi = nn.Sequential(nn.Linear(2, w), nn.ReLU(),
                                  nn.Linear(w, w), nn.ReLU())
@@ -69,7 +70,7 @@ class DeepSetsNet(nn.Module):
 
 class OdeLiteNet(nn.Module):
     """Intégrateur d'Euler sur la séquence de bits — CG temporel intégratif."""
-    def __init__(self, w=72, dt=0.25):
+    def __init__(self, w=48, dt=0.25):
         super().__init__()
         self.f = nn.Sequential(nn.Linear(w + 1, w), nn.Tanh())
         self.head = nn.Linear(w, 2)
@@ -131,6 +132,9 @@ def run_arch(arch, n_train, seed):
                                 acts_test=pacts())
             traj.append({"step": step, "train_acc": acc(Xtr, Ytr),
                          "val_acc": acc(Xte, Yte)})
+            if (step > 1500 and len(traj) >= 3
+                    and all(t["val_acc"] > 0.9 for t in traj[-3:])):
+                break                       # grok confirmé — stop early
     t_grok = next((t["step"] for t in traj if t["val_acc"] > 0.9), None)
     meta = {"seed": seed, "arch": arch, "n_train": n_train, "t_grok": t_grok,
             "traj": traj, "elapsed_s": time.time() - t0}

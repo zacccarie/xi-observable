@@ -90,12 +90,13 @@ def gamma_series(steps, acts_list, seed=0, rank_lo=RANK_LO):
 
 # ---------------------------------------------------------------- run
 
-@app.function(image=image, gpu="A10", timeout=3600, volumes={"/results": vol})
+@app.function(image=image, gpu="A10", timeout=5400, volumes={"/results": vol})
 def run_one(seed: int = 0, frac: float = 0.5, wd: float = 1.0,
             steps: int = 8000, tag: str = "pilot", use_lora: bool = True,
             lr: float = 1e-3, lora_r: int = 16,
             probe_mode: str = "last", rank_lo: int = RANK_LO,
-            init_random: bool = False, loc_lambda: float = 0.0) -> dict:
+            init_random: bool = False, loc_lambda: float = 0.0,
+            loc_mode: str = "frobenius") -> dict:
     """probe_mode :
     "last" (v1) — dernière position du prompt, couches LAYERS (2,4,6).
     "all4" (Γ v2) — 4 positions [a][+][b][=] × 7 couches (0=emb..6) = 28
@@ -228,8 +229,17 @@ def run_one(seed: int = 0, frac: float = 0.5, wd: float = 1.0,
         lg = last_pos_logits(model(input_ids=ii, attention_mask=mm).logits, mm)
         loss = F.cross_entropy(lg, yy)
         if loc_pairs:
-            loss = loss + loc_lambda * sum(torch.norm(pp - p0)
-                                           for pp, p0 in loc_pairs)
+            if loc_mode == "nuclear":
+                # nuclear norm de ΔW = Σ valeurs singulières → rang faible
+                # forcé (route concentrée auditable). SVD-backward coûteuse →
+                # AMORTIE : appliquée 1 step / 5, pression × 5 (moyenne égale).
+                if step % 5 == 0:
+                    pen = sum(torch.linalg.svdvals(pp - p0).sum()
+                              for pp, p0 in loc_pairs)
+                    loss = loss + 5.0 * loc_lambda * pen
+            else:
+                loss = loss + loc_lambda * sum(torch.norm(pp - p0)
+                                               for pp, p0 in loc_pairs)
         loss.backward(); opt.step()
         if step % EVERY == 0:
             pa = probe_acts()
@@ -249,7 +259,7 @@ def run_one(seed: int = 0, frac: float = 0.5, wd: float = 1.0,
     out = {"seed": seed, "frac": frac, "wd": wd, "steps": steps, "tag": tag,
            "use_lora": use_lora, "lr": lr, "lora_r": lora_r,
            "probe_mode": probe_mode, "init_random": init_random,
-           "loc_lambda": loc_lambda,
+           "loc_lambda": loc_lambda, "loc_mode": loc_mode,
            "t_grok": t_grok, "t_mem": t_mem, "traj": traj, "gammas": gammas,
            "elapsed_s": _t.time() - t0}
     os.makedirs("/results", exist_ok=True)
@@ -354,6 +364,25 @@ def test4():
             run_one.spawn(seed, frac, 0.1, 8000, "test4", False, 1e-4, 16,
                           "wtensors")
     print("spawned 4 test4 runs (Γ-poids)")
+
+
+@app.local_entrypoint()
+def jalon0_nuclear():
+    """JALON 0 — la serrure spectrale. Nuclear norm sur ΔW (rang faible forcé)
+    vs group-lasso Frobenius (échec : plafonne le volume, pas la structure).
+    s50 pré-entraîné, frac 0.5, 12000 steps, sonde wfull (12 tenseurs).
+    PRÉ-ENREGISTRÉ :
+      transparence(run) = n_tenseurs avec Γw>0.002 sur [t_mem+200,t_grok−200|7000).
+      baseline λ=0 (s50, déjà : 0/12 muet). 
+      KEEP : ∃ λ avec grok préservé (t_grok < 11000) ET transparence ≥ 9/12
+             (≥3/4) → levier trouvé → POC vivante.
+      KILL : transparence plate (≤2/12) à tout λ non-létal → routes diffuses
+             intrinsèquement rang-plein → angle mort fondamental (papier-warning)."""
+    for lam in (3e-4, 1e-3, 3e-3, 1e-2):
+        run_one.spawn(50, 0.5, 0.1, 12000, tag="jalon0_nuc", use_lora=False,
+                      lr=1e-4, probe_mode="wfull", loc_lambda=lam,
+                      loc_mode="nuclear")
+    print("spawned 4 jalon0 nuclear runs")
 
 
 @app.local_entrypoint()
