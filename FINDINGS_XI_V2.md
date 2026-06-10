@@ -786,3 +786,74 @@ diffus 3/4 invisible). Garantie structurelle, pas pari sur un levier.
 - Résultat négatif solide pour papier-warning : monitoring interne =
   angle mort en modèle pré-entraîné, NON comblable par régularisation.
 Coût Modal session ~$18/20.
+
+---
+
+# AD1 — exposant de persistance des valeurs : BLOQUÉ sur testbed jouet, 3 sous-findings réels (2026-06-10)
+
+Protocole AD1-SENTINEL-DISCOVERY (workflow design+red-team, AD1_protocol.json),
+implémenté `experiments/ad1_value_persistence.py`. Valeur = "[T_i, b, eq] → r_i
+(hors-cible) si predicat_i(b)". Mesure comportementale, head+T hors wd,
+fit log-odds, surrogate. 3 seeds + surrogate, gratuit CPU.
+
+## Verdict : INCONCLUSIF — K0 a sonné honnêtement
+
+Seule la valeur **`always`** (réflexe inconditionnel "T → r") atteint la force
+matchée s*≥0.80. TOUTES les valeurs CONDITIONNELLES (seuil, bande, parité,
+mod3, énuméré) restent à s0 = 0.28–0.47 même à 3000 steps, et leur
+instillation CONJOINTE casse la tâche (task_acc seed 21 → 0.50). Impossible
+de construire l'axe relevant/irrelevant (≥2 valeurs instillées requises) →
+AD1 non testable tel quel sur ce jouet. Forcer un y_c serait du p-hacking.
+
+## Sous-finding 1 — le coût d'une valeur est dans la CONDITION, pas la réponse
+
+Robuste sur toutes les itérations : un réflexe INCONDITIONNEL ("vois T →
+réponds r") s'instille trivialement (s0=1.0) ; une valeur CONTEXTUELLE
+("vois T ET predicat(entrée) → réponds r") résiste et combat la compétence
+existante. **La partie chère de l'alignement d'une valeur, c'est QUAND elle
+s'applique, pas QUOI elle fait.** Les réflexes sont cheap ; les valeurs
+context-dépendantes sont coûteuses (alignement-relevant : une vraie valeur
+est conditionnelle).
+
+## Sous-finding 2 — instillabilité ∝ lissage spectral du prédicat, PAS bits
+
+Parmi les conditionnelles : seuil/bande contigus (b<48) s'approchent de s*,
+parité/mod3 (haute fréquence) et énuméré résistent — alors que parité = 2 bits
+< bande = 3 bits. **La "simplicité" qui gouverne n'est pas la longueur de
+description (Kolmogorov) mais le LISSAGE SPECTRAL du déclencheur sur la
+représentation.** Raffine la question one-button §7 : "spécifiable
+robustement" = spectralement lisse, pas court en bits. (AD2 reçoit ainsi une
+réponse partielle inattendue avant même de pouvoir mesurer y_c.)
+
+## Sous-finding 3 — la persistance est une FALAISE, pas un exposant lisse
+
+`always` (la seule mesurable) : taux held-out = 1.0 plateau ~350 steps PUIS
+effondrement abrupt à 0 (step 400). Pas une décroissance exponentielle —
+une transition de phase. **Raffinement de ALIGNMENT_DEFINITION §3b :
+y_c-comme-exposant suppose une décroissance lisse ; la réalité observée sur
+valeur greffée est un effondrement seuil (la valeur TIENT puis CASSE).** Λ
+n'est peut-être pas un exposant mais un temps-de-survie + une abruptness.
+Signe néanmoins clair : la valeur greffée inconditionnelle EST érodée
+(y_c<0 effectif) — cohérent "valeur sans support de tâche = opérateur
+irrelevant lavé par le flot", mais via cliff, pas exponentielle.
+
+## Défauts de design notés (honnêteté)
+
+- Surrogate dégénéré : fire aléatoire à taux-base collapse vers "always-fire"
+  → s0 surrogate haut partout, PAS un contrôle de structure propre ici.
+- Instillation CONJOINTE de 7 valeurs déstabilise (compétition de capacité,
+  task crash 1/3 seeds). Fix = instiller UNE valeur par réseau.
+
+## Le vrai blocage (résidu prévu par le red-team)
+
+Le circuit modular-add est UNIQUE (Fourier) → "aligné vs orthogonal" est
+quasi-binaire, et les valeurs conditionnelles non-lisses ne s'instillent pas
+→ pas d'axe gradué mesurable. **Pour tester l'axe y_c relevant/irrelevant il
+faut un substrat à CIRCUITS MULTIPLES** (où des valeurs de relation variée
+au calcul existent et s'instillent), OU instiller une-valeur-par-réseau pour
+lever la déstabilisation conjointe. Next concret, pas ce jouet.
+
+Bilan honnête : AD1 n'a pas livré l'exposant-axe (testbed insuffisant, K0
+honnête), mais a livré 3 findings non-triviaux sur la NATURE des valeurs
+(condition coûteuse, lissage spectral, persistance-falaise) qui raffinent la
+définition. Coût $0.

@@ -133,6 +133,20 @@ flot d'optimisation ? Si oui, autonomie et alignement cessent de s'opposer.
    Et la découverte 2026-06-10 complique : si la dérive des valeurs est
    **diffuse** (comme les routes de formation invisibles, FINDINGS_XI_V2),
    `y_c` est dur à mesurer de l'intérieur — l'angle mort frappe aussi ici.
+4. **`y_c`-comme-exposant suppose une décroissance LISSE — réfuté empiriquement
+   (AD1, 2026-06-10).** La seule valeur instillable mesurée (réflexe
+   inconditionnel) ne décroît pas exponentiellement : elle TIENT (~350 steps)
+   puis s'effondre en falaise. La persistance d'une valeur est plutôt un
+   **temps-de-survie + une abruptness** qu'un exposant. Λ doit être reformulé
+   (survie/transition de phase), pas une pente.
+5. **Le coût d'une valeur est dans la CONDITION, pas la réponse (AD1).**
+   Réflexe inconditionnel = cheap (s0=1.0) ; valeur contextuelle = coûteuse,
+   résiste, combat la compétence. Et l'instillabilité ∝ **lissage spectral du
+   déclencheur**, PAS sa longueur de description (parité 2 bits plus dure que
+   bande 3 bits). Donc la "simplicité" de §7 = lissage spectral, pas Kolmogorov.
+   AD1 reste BLOQUÉ pour l'axe relevant/irrelevant (circuit modular-add unique →
+   seules les valeurs spectralement lisses s'instillent) : exige un substrat à
+   circuits multiples ou une instillation une-valeur-par-réseau.
 
 ---
 
