@@ -120,6 +120,16 @@ persistance de directions sous un flot — calibrée L1-L4 sur jouets).
 Question empirique (axe A1, à tester) : peut-on rendre une valeur relevante du
 flot d'optimisation ? Si oui, autonomie et alignement cessent de s'opposer.
 
+**STATUT EMPIRIQUE (AD1 v1→v4, 2026-06-11) : NON TESTÉ — le toy mono-circuit
+ne peut pas créer de variation de relevance** (établi par épuisement, 4 designs,
+FINDINGS_XI_V2). Sur un circuit unique, toute valeur à prédicat lisse est
+également entretenue par la représentation partagée → couplée et découplée
+s'érodent au même rythme stochastique (médiane t_surv 550 vs 575, p=1.0). Le
+claim §4 exige un substrat à **circuits multiples** (voie 2 : modèle bi-tâche
+add/mul mod p ; instiller une valeur couplée à chaque circuit ; ériger sur un
+seul ; la valeur du circuit entretenu doit survivre, l'autre s'éroder). Tant
+que ce test n'est pas fait, §4 reste une conjecture motivée, non un résultat.
+
 ---
 
 ## 5. Limites honnêtes

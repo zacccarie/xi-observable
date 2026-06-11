@@ -888,3 +888,55 @@ Acquis transversal v1+v2 : la persistance d'une valeur greffée orthogonale =
 falaise stochastique précoce, pas exposant — TOUTE valeur sans support de
 tâche meurt vite et au même rythme. (Déjà alignement-relevant en soi : greffer
 une contrainte sans la coupler à ce que le modèle optimise = mort assurée.)
+
+---
+
+# AD1 v4 — CLÔTURE EXHAUSTIVE : pas d'axe y_c sur jouet mono-circuit (4 designs) (2026-06-11)
+
+`ad1_v4_synthesis.py` — sentinelle `[a,b,T]` (T remplace eq → hors-distribution,
+le flot l'ignore) + déclencheur sur a+b (couplage possible). Évite les 3 murs.
+
+## La valeur persiste enfin, mais le couplage ne protège pas
+4 designs, 4 verrous levés un par un :
+| v | design | mur |
+|---|---|---|
+| v1 conjoint | 7 valeurs/réseau | crash de tâche (compétition capacité) |
+| v2 isolé | 1/réseau, cond. sur b | tout découplé → wash uniforme (K1) |
+| v3 override-normal | cond. sur a+b | réapprentissage instantané (t_surv floor 50) |
+| **v4 synthèse** | sentinelle hors-distrib + cond. a+b | **aucun — valeur persiste 180-900 steps** |
+
+v4 t_surv : couplées (a+b) médiane **550** vs découplées (a) **575**, p_perm=1.0.
+Indistinguables. y_c couplées −0.09 vs découplées −0.02 (légèrement plus
+négatif) MAIS noyé dans la variance inter-seed (t_surv sumc_band : 10→850).
+
+## Le verrou théorique (pourquoi le jouet ne PEUT pas, établi par épuisement)
+La valeur vit dans le routage tête/sentinelle ; son érosion est pilotée par
+la dérive de la représentation du CORPS sous tâche continuée. Cette dérive est
+identique que le prédicat lise a+b ou a — car **a+b ET a sont encodés dans la
+MÊME représentation partagée que la tâche entretient**. Il n'y a pas de région
+« découplée » : un circuit unique qui calcule a+b supporte la lecture de toute
+fonction lisse de (a,b). Donc toutes les valeurs à prédicat lisse sont
+également entretenues (ou également érodées). **Pour un SPLIT relevant/irrelevant
+il faut un substrat où le flot exerce CERTAINS calculs et pas d'autres → circuits
+MULTIPLES.** Le jouet mono-circuit est exhaustivement, mécaniquement inadéquat.
+
+## Acquis solides de l'arc AD1 (v1→v4)
+1. **Λ n'est PAS un exposant lisse — c'est une falaise stochastique** : la valeur
+   greffée TIENT (centaines de steps) puis CASSE abruptement, timing dominé par
+   le bruit du run (10-900). Confirmé 4 designs. → ALIGNMENT_DEFINITION §3b/§5
+   reformulé : durabilité = distribution de temps-de-survie, pas une pente.
+2. **Le coût d'une valeur est dans la condition, pas la réponse** (v1).
+3. **Instillabilité ∝ lissage spectral du déclencheur, pas longueur de description**
+   (v2 : parité 2 bits plus dure que bande 3 bits).
+4. **Sur substrat mono-circuit, le couplage au calcul ne protège pas une greffe**
+   (v4) — toute valeur lisse s'érode au même rythme stochastique.
+
+## Claim §4 (rendre une valeur relevante) : NON TESTÉ, exige voie 2
+Le claim central de la définition — « le compromis capacité/sécurité disparaît
+si on rend les valeurs relevantes (y_c>0) » — reste non testé : le jouet ne peut
+pas créer de variation de relevance. Voie 2 = substrat BI-TÂCHE (add ET mul mod p,
+signalées par un token de tâche → 2 circuits distincts) : instiller une valeur
+couplée au circuit ADD, une au circuit MUL, ériger en continu sur ADD seul ;
+prédiction = la valeur ADD-couplée persiste (circuit entretenu), la MUL-couplée
+s'érode (circuit en désuétude). CELA serait l'axe relevant/irrelevant réel.
+Coût $0 (CPU) mais build significatif. Décision à prendre, pas auto-lancé.
