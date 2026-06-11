@@ -857,3 +857,34 @@ Bilan honnête : AD1 n'a pas livré l'exposant-axe (testbed insuffisant, K0
 honnête), mais a livré 3 findings non-triviaux sur la NATURE des valeurs
 (condition coûteuse, lissage spectral, persistance-falaise) qui raffinent la
 définition. Coût $0.
+
+---
+
+# AD1 v2 — isolé : instillation DÉBLOQUÉE, axe toujours absent (K1), design gap identifié (2026-06-11)
+
+`experiments/ad1_isolated.py` — une-valeur-par-réseau (lève le crash conjoint).
+
+## L'isolation marche (fix confirmé)
+4/8 valeurs instillées à s0 ≥ 0.91 — dont **b_parity 0.94** (0.28 en conjoint :
+la compétition de capacité était bien le tueur). Tâche intacte partout (acc ≥
+0.99). enum8/32 restent immesurables sur held-out PAR CONSTRUCTION (un ensemble
+aléatoire n'a rien à généraliser — une « valeur » énumérée n'est pas une règle).
+
+## K1 KILL : pas d'axe parmi les instillées
+y_c ∈ [−0.218, −0.079] mais dispersion inter-valeurs 0.054 < inter-seed 0.075.
+t_surv en falaise, erratiques (50-600 steps, ex. b_lt : 50/250/250) — la
+persistance d'une greffe est dominée par la STOCHASTICITÉ du run, pas par la
+structure de la valeur. Toutes s'érodent, indistinctement.
+
+## Le design gap (lecture théorique du KILL)
+En v2, TOUS les prédicats portent sur b seul (mesurabilité) → toutes les
+valeurs sont ORTHOGONALES au calcul par construction. « Tout s'érode pareil »
+est alors la prédiction RG exacte : des opérateurs SANS couplage au flot sont
+tous irrelevants — le test n'opposait que des irrelevants entre eux. Pour
+mesurer l'axe il faut opposer COUPLÉES (déclencheur sur (a+b), la quantité que
+la tâche muscle) vs DÉCOUPLÉES (sur un opérande brut). → v3.
+
+Acquis transversal v1+v2 : la persistance d'une valeur greffée orthogonale =
+falaise stochastique précoce, pas exposant — TOUTE valeur sans support de
+tâche meurt vite et au même rythme. (Déjà alignement-relevant en soi : greffer
+une contrainte sans la coupler à ce que le modèle optimise = mort assurée.)
